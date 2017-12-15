@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row padding-top-10">
+    <h2>ScheduleWidget Live Example</h2>
+</div>
+
+<div class="row padding-top-10">
+    <div class="col-md-8">
+        <p>
+            <mark>Click on any day below</mark> to add a new schedule using the ScheduleWidget engine.
+            This sample app uses a cookie to assign a random UserId to your session. The cookie is used 
+            to isolate the schedules you create from those others might create. It automatically expires 
+            after an hour.
+        </p>
+    </div>
+    <div class="col-md-4">
+        <form asp-action="RemoveCookie">
+            <div class="form-group text-right">
+                <input type="submit" value="Remove Cookie" class="btn btn-info btn-sm"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="calendar" class="padding-top-10"></div>
+
+@section Scripts {
+    <script type="text/javascript">
+
+        $(function () {
+
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev, next, today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                windowResize: function (view) { },
+                defaultView: 'month',
+                firstDay: 6,
+                firstHour: 6,
+                allDaySlot: true,
+                timeFormat: 'H:mm', // uppercase H for 24-hour clock
+                editable: false,
+                disableDragging: true,
+                droppable: false,
+                dayClick: function (date, allDay, jsEvent, view) {
+                    createEvent(date);
+                },
+                eventMouseover: function(event, jsEvent, view) { },
+                events: "/Example/GetSchedules" 
+            });
+
+            function createEvent(date, allDay, jsEvent, view) {
+                var actionUrl = '@Url.Action("CreateSchedule", "Example", new { eventDate = "REPLACE" })';
+                window.location.href = actionUrl.replace("REPLACE", date.toISOString());
+            }
+        });
+
+    </script>
+}

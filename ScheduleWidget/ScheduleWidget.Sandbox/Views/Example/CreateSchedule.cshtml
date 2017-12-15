@@ -1,0 +1,222 @@
+﻿@model ScheduleWidget.Sandbox.Models.ScheduleViewModel
+
+@{
+    ViewData["Title"] = "CreateSchedule";
+}
+
+<h2>Create Schedule</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateSchedule">
+            @Html.HiddenFor(model => model.ID)
+            @Html.HiddenFor(model => model.UserId)
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="recurrence-details form-group">
+                <label>Create Schedule</label>     
+                <div class="form-group">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div id="schedule-recurrence-selection" class="form-group">
+                    @Html.RadioButton("ScheduleRecurrence", "OneTime", new { id = "rb-one-time-event" })&nbsp;One-time only
+                    @Html.RadioButton("ScheduleRecurrence", "Repeat", new { id = "rb-recurrence-event" })&nbsp;Repeat
+                    <span id="schedule-recurrence-choice">
+                        @Html.DropDownList("FrequencyChoice", (SelectList)ViewBag.FrequencyChoices, "-- Choose Schedule --")
+                    </span>
+                </div>
+                <div id="day-selection" class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsSundaySelected" /> Sun
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsMondaySelected" /> Mon
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsTuesdaySelected" /> Tue
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsWednesdaySelected" /> Wed
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsThursdaySelected" /> Thu
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsFridaySelected" /> Fri
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsSaturdaySelected" /> Sat
+                        </label>
+                    </div>
+                </div>
+                <div id="monthly-interval-selection" class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsFirstWeekOfMonthSelected" /> First
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsSecondWeekOfMonthSelected" /> Second
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsThirdWeekOfMonthSelected" /> Third
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsFourthWeekOfMonthSelected" /> Fourth
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input asp-for="IsLastWeekOfMonthSelected" /> Last Week of Every Month
+                        </label>
+                    </div>
+                </div> 
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input id="start-date" asp-for="StartDate" type="date" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartTime" class="control-label"></label>
+                <input asp-for="StartTime" type="time" class="form-control" />
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate" class="control-label"></label>
+                <input id="end-date" asp-for="EndDate" type="date" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndTime" class="control-label"></label>
+                <input asp-for="EndTime" type="time" class="form-control" />
+                <span asp-validation-for="EndTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+
+        $(function() {
+            checkRecurrenceType();
+            $("#start-date").datepicker();
+            $("#end-date").datepicker();
+        });
+
+        $("#rb-one-time-event").click(function() {
+            hideRecurrenceControls();
+        });
+
+        $("#rb-recurrence-event").click(function() {
+
+            // show the repeat weeks
+            $("#schedule-recurrence-choice").show("fast");
+
+            // show the end date
+            $("#schedule-end-date").show("fast");
+
+        });
+
+        $("#schedule-recurrence-choice").click(function() {
+
+            var value = $("#FrequencyChoice").val();
+
+            if (value == 1) { /* daily */
+                $("#day-selection").hide("fast");
+                $("#monthly-interval-selection").hide("fast");
+                return;
+            }
+
+            if (value == 2) { /* weekly */
+                $("#day-selection").show("fast");
+                $("#monthly-interval-selection").hide("fast");
+                return;
+            }
+
+            if (value == 3) { /* biweekly */
+                $("#day-selection").show("fast");
+                $("#monthly-interval-selection").hide("fast");
+                return;
+            }
+
+            if (value == 4) { /* monthly */
+                $("#day-selection").show("fast");
+                $("#monthly-interval-selection").show("fast");
+            }
+        });
+
+        function checkRecurrenceType() {
+            if (jQuery("#rb-one-time-event").is(":checked")) {
+                hideRecurrenceControls();
+            }
+
+            // hide days and monthly options if daily frequency
+            var value = $("#FrequencyChoice").val();
+            if (value == 1) { // daily
+                $("#day-selection").hide("fast");
+                $("#monthly-interval-selection").hide("fast");
+            }
+
+            if (value == 2) { // weekly
+                $("#day-selection").show("fast");
+                $("#monthly-interval-selection").hide("fast");
+                return;
+            }
+
+            if (value == 3) { // biweekly
+                $("#day-selection").show("fast");
+                $("#monthly-interval-selection").hide("fast");
+                return;
+            }
+
+            if (value == 4) { // monthly
+                $("#day-selection").show("fast");
+                $("#monthly-interval-selection").show("fast");
+            }
+        }
+
+        function hideRecurrenceControls() {
+
+            // hide the repeat weeks
+            $("#schedule-recurrence-choice").hide("fast");
+
+            // set the frequency value back to empty
+            $("#FrequencyChoice").val("");
+
+            // hide the end date
+            $("#schedule-end-date").hide("fast");
+
+            // hide the days of the week
+            $("#day-selection").hide("fast");
+
+            // hide the monthly interval options
+            $("#monthly-interval-selection").hide("fast");
+        }
+
+    </script>
+}

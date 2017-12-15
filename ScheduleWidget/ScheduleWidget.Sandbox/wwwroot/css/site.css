@@ -1,0 +1,55 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.padding-top-10 {
+    padding-top: 10px;
+}
+
+
+/* documentation
+----------------------------------------------------------*/
+h4 {
+    padding-top: 20px;
+}
+
+p {
+    margin-bottom: 15px;
+}
+
+
+/* schedule recurrence
+----------------------------------------------------------*/
+
+.recurrence-details {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.textbox.singlechar {
+    width: 1em;
+}
+
+.textbox.narrow {
+    width: 5em;
+}
+
+.regular {
+    font-size: 1.0em;
+}
+
+.very-large {
+    font-size: 2em;
+}
+
+.jumbo {
+    font-size: 3em;
+}

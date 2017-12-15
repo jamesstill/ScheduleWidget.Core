@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>ScheduleWidget.Core</PackageId>
+    <PackageVersion>2.0.0</PackageVersion>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Authors>James Still</Authors>
+    <Description>ScheduleWidget handles recurring events for calendars</Description>
+    <Copyright>Copyright (c) 2017 James Still</Copyright>
+    <PackageTags>schedule recurring events calendar calendars</PackageTags>
+    <PackageProjectUrl>http://schedulewidget.azurewebsites.net</PackageProjectUrl>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+</Project>

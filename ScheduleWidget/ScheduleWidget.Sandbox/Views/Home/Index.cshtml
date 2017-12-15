@@ -1,0 +1,766 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="page-header">
+    <h1>ScheduleWidget</h1>
+    <h4>Scheduling engine to create recurring events for calendars</h4>
+</div>
+
+<div class="alert alert-success alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>This is the .NET Core 2.0 Version!</strong> <a href="http://www.squarewidget.com/schedulewidget">Go here</a> for the older .NET Framework version.
+</div>
+
+<h3>Install</h3>
+
+<div class="panel-body">
+    <code>
+        PM> Install-Package ScheduleWidgetCore -Version 1.0.0
+    </code>
+</div>
+
+<h3>GitHub</h3>
+
+<div class="panel-body">
+    <code>
+        TODO: URL to GitHub repo...
+    </code>
+</div>
+
+<h3>Quick Start</h3>
+
+<p>
+    ScheduleWidget is a scheduling engine that creates recurring events for calendar. It is an implementation based on Martin Fowler's white
+    paper <a href="https://martinfowler.com/apsupp/recurring.pdf">Recurring Events for Calendars</a> in which he describes the software
+    design. This is a complete .NET Core 2.0 rewrite of the popular <a href="https://www.nuget.org/packages/ScheduleWidget/">.NET Framework 
+    version</a>. Suppose we want to create a schedule that describes the first Monday of every month:
+</p>
+
+<div class="panel-body">
+    <pre>
+var builder = new ScheduleBuilder();
+
+var schedule = builder
+    .DuringMonth(WeekInterval.First)
+    .OnDaysOfWeek(DayInterval.Mon)
+    .HavingFrequency(FrequencyType.Monthly)
+    .Create();
+    </pre>
+</div>
+
+<p>
+    Once we create a <code>Schedule</code> we can ask it questions. The <code>Schedule</code> exposes methods (documented
+    in more detail below) that return <em>schedule occurrences</em> (concrete <code>DateTime</code> value objects) over a 
+    defined period of time. Suppose <code>DateTime.Today</code> is 20 December 2030:
+</p>
+
+<div class="panel-body">
+    <pre>
+var during = new DateRange(DateTime.Today, DateTime.Today.AddMonths(6));
+
+foreach (var date in schedule.Occurrences(during))
+{
+    Debug.WriteLine(date.ToShortDateString());
+}
+
+Output CultureInfo("en-US"):
+
+1/6/2031
+2/3/2031
+3/3/2031
+4/7/2031
+5/5/2031
+6/2/2031
+    </pre>
+</div>
+
+<p>That's all there is to it. Read on for detailed documentation and code samples.</p>
+
+<div class="alert alert-success" role="alert">
+    <strong>Try It Out!</strong> Click <code>Live Example</code> in the menu above to exercise a real-world example.
+</div>
+
+<h3>Documentation</h3>
+
+<p>Jump to...</p>
+<ul>
+    <li><a href="#schedulebuilder">ScheduleBuilder</a></li>
+    <li><a href="#fluentinterfacedependencies">Fluent Interface Dependencies</a></li>
+    <li><a href="#one-time-only">One-Time Only Occurrence</a></li>
+    <li><a href="#schedule">Schedule</a></li>
+    <li><a href="#example-daily-schedules">Example Daily Schedules</a></li>
+    <li><a href="#example-weekly-schedules">Example Weekly Schedules</a></li>
+    <li><a href="#example-monthly-schedules">Example Monthly Schedules</a></li>
+    <li><a href="#example-quarterly-schedules">Example Quarterly Schedules</a></li>
+    <li><a href="#example-yearly-schedules">Example Yearly (Anniversary) Schedules</a></li>
+    <li><a href="#excluding-holidays">Excluding Holidays</a></li>
+    <li><a href="#example-street-cleaning">Example Street Cleaning</a></li>
+    <li><a href="#easter">Easter</a></li>
+    <li><a href="#support">Support</a></li>
+</ul>
+
+<h4 id="schedulebuilder">ScheduleBuilder</h4>
+
+<p>
+    When you create a schedule you must first instantiate a <code>ScheduleBuilder</code>. This class exposes a fluent interface
+    to permit you to describe the schedule.
+</p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">ScheduleBuilder Methods</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+OnDaysOfWeek(DayInterval);
+DuringMonth(WeekInterval);
+DuringMonthOfQuarter(MonthOfQuarterInterval);
+DuringQuarter(QuarterInterval);
+DuringYear(ScheduleRangeInYear);
+OnAnniversary(ScheduleAnnual);
+Excluding(TemporalExpressionUnion);
+HavingFrequency(FrequencyType);</pre>
+    </div>
+</div>
+
+<p>
+    Notice that the <code>HavingFrequency</code> method takes a <code>FrequencyType</code>:
+</p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">FrequencyType</h3>
+    </div>
+    <div class="panel-body">
+<pre>
+public enum FrequencyType
+{
+    None = 0,
+    Daily = 1,
+    Weekly = 2,
+    Monthly = 3,
+    Quarterly = 4,
+    Yearly = 5
+}</pre>
+    </div>
+</div>
+
+<p>
+    Every schedule must have a <code>FrequencyType</code>. The default is <code>None</code> which means there is no
+    schedule at all. So always call this method and set a value. You do not have to use the enumerated constant.
+    Suppose you are rehydrating a schedule from a database. You could store the <code>int</code> value in the database and pass
+    that into the builder like so: <code>HavingFrequency(2)</code>.
+</p>
+
+<p>
+    The other interval types are implemented as bit fields with a set of flags that can be mixed and
+    matched to describe the recurrence of the schedule.
+</p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">DayInterval</h3>
+    </div>
+    <div class="panel-body">
+<pre>
+[Flags]
+public enum DayInterval
+{
+    None = 0,
+    Sun = 1,
+    Mon = 2,
+    Tue = 4,
+    Wed = 8,
+    Thu = 16,
+    Fri = 32,
+    Sat = 64,
+    All = Sun | Mon | Tue | Wed | Thu | Fri | Sat
+}</pre>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">WeekInterval</h3>
+    </div>
+    <div class="panel-body">
+<pre>
+[Flags]
+public enum WeekInterval
+{
+    None = 0,
+    First = 1,
+    Second = 2,
+    Third = 4,
+    Fourth = 8,
+    Last = 16
+}</pre>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">MonthOfQuarterInterval</h3>
+    </div>
+    <div class="panel-body">
+<pre>
+[Flags]
+public enum MonthOfQuarterInterval
+{
+    None = 0,
+    First = 1,
+    Second = 2,
+    Third = 4
+}</pre>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">QuarterInterval</h3>
+    </div>
+    <div class="panel-body">
+<pre>
+[Flags]
+public enum QuarterInterval
+{
+    None = 0,
+    First = 1,
+    Second = 2,
+    Third = 4,
+    Fourth = 8,
+    All = First | Second | Third | Fourth
+}</pre>
+    </div>
+</div>
+
+<p>
+    Just like with the <code>FrequencyType</code> you can store these values in a database. Suppose a schedule
+    occurs every Mon, Wed, and Fri. You can store <code>42</code> in the database and rehydrate the schedule by
+    calling:
+    <pre>
+var builder = new ScheduleBuilder();
+
+var schedule = builder
+    .OnDaysOfWeek(42)
+    .HavingFrequency(2)
+    .Create();</pre>
+</p>
+
+<h4 id="fluentinterfacedependencies">Fluent Interface Dependencies</h4>
+
+<p>Certain methods must be called depending upon the <code>FrequencyType</code> used:</p>
+
+<div class="table-responsive">
+    <table class="table table-condensed">
+        <thead>
+            <tr class="active">
+                <th>Frequency</th>
+                <th>Method(s) To Use</th>
+                <th>Example</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Daily (1)</td>
+                <td>--</td>
+                <td>Every day of every week</td>
+            </tr>
+            <tr>
+                <td>Weekly (2)</td>
+                <td>
+                    <code>OnDaysOfWeek</code>
+                </td>
+                <td>
+                    Every Mon, Wed, and Fri
+                </td>
+            </tr>
+            <tr>
+                <td>Monthly (3)</td>
+                <td>
+                    <code>DuringMonth</code>
+                </td>
+                <td>
+                    The third week of every month
+                </td>
+            </tr>
+            <tr>
+                <td>Quarterly (4)</td>
+                <td>
+                    <code>
+                        OnDaysOfWeek<br />
+                        DuringMonth<br />
+                        DuringMonthOfQuarter<br />
+                        DuringQuarter
+                    </code>
+                </td>
+                <td>
+                    The last Fri of the last week of every quarter
+                </td>
+            </tr>
+            <tr>
+                <td>Yearly (5)</td>
+                <td>
+                    <code>
+                        OnAnniversary
+                    </code>
+                </td>
+                <td>
+                    Every Sep 15
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<h3 id="one-time-only">One Time Only Occurrence</h3>
+
+<p>
+    A one-time only occurrence does not need a <code>Schedule</code> so you can use a simple <code>ScheduleDate</code> instead.
+</p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">One-Time Only Occurrence</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+// no need for a schedule
+var d1 = new ScheduleDate(DateTime.Today);
+Debug.Assert(d1.Includes(DateTime.Today));
+Debug.Assert(!d1.Includes(DateTime.Today.AddDays(1)));
+        </pre>
+    </div>
+</div>
+
+<h4 id="schedule">Schedule</h4>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Schedule Methods</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+public bool IsOccurring(DateTime aDate);
+public IEnumerable&lt;DateTime&gt; Occurrences();
+public IEnumerable&lt;DateTime&gt; Occurrences(DateRange during);
+public DateTime? NextOccurrence(DateTime aDate);
+public DateTime? NextOccurrence(DateTime aDate, DateRange during);
+public DateTime? PreviousOccurrence(DateTime aDate);
+public DateTime? PreviousOccurrence(DateTime aDate, DateRange during);
+</pre>
+    </div>
+</div>
+
+<p>
+    The <code>IsOccurring</code> method returns true if the date falls on the schedule or false if it does not.
+    To get a list of schedule occurrences call the <code>Occurrences</code> method. It will return all dates over
+    a default two-year period (one year ago to one year from today). Pass in a <code>DateRange</code> to get all
+    schedule occurrences within that period. The remaining methods will return the previous or next nullable occurrence
+    relative to the passed in date argument.
+</p>
+
+<h3 id="example-daily-schedules">Example Daily Schedule</h3>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Every Day</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+var builder = new ScheduleBuilder();
+
+var schedule = builder
+    .OnDaysOfWeek(DayInterval.All)
+    .HavingFrequency(FrequencyType.Daily)
+    .Create();
+
+var today = DateTime.Today;
+var tomorrow = today.AddDays(1);
+var forever = tomorrow.AddYears(1000);
+
+Debug.Assert(schedule.IsOccurring(today));
+Debug.Assert(schedule.IsOccurring(tomorrow));
+Debug.Assert(schedule.IsOccurring(forever));
+        </pre>
+    </div>
+</div>
+
+<h3 id="example-weekly-schedules">Example Weekly Schedule</h3>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Every Mon, Wed, and Fri</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+var builder = new ScheduleBuilder();
+
+var schedule = builder
+    .OnDaysOfWeek(DayInterval.Mon | DayInterval.Wed | DayInterval.Fri)
+    .HavingFrequency(FrequencyType.Weekly)
+    .Create();
+
+var date1 = new DateTime(2030, 2, 4);
+var date2 = new DateTime(2030, 2, 5);
+var date3 = new DateTime(2030, 2, 6);
+var date4 = new DateTime(2030, 2, 7);
+var date5 = new DateTime(2030, 2, 8);
+
+Debug.Assert(schedule.IsOccurring(date1));
+Debug.Assert(schedule.IsOccurring(date3));
+Debug.Assert(schedule.IsOccurring(date5));
+
+Debug.Assert(!schedule.IsOccurring(date2));
+Debug.Assert(!schedule.IsOccurring(date4));
+        </pre>
+    </div>
+</div>
+
+<h3 id="example-monthly-schedules">Example Monthly Schedules</h3>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Multiple Week Intervals</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+var builder = new ScheduleBuilder();
+
+// first and third Sat of every month
+var schedule = builder
+    .DuringMonth(WeekInterval.First | WeekInterval.Third)
+    .OnDaysOfWeek(DayInterval.Sat)
+    .HavingFrequency(FrequencyType.Monthly)
+    .Create();
+        </pre>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Multiple Day Intervals</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+var builder = new ScheduleBuilder();
+
+// first Mon, Wed, and Fri of every month
+var schedule = builder
+    .DuringMonth(WeekInterval.First)
+    .OnDaysOfWeek(DayInterval.Mon | DayInterval.Wed | DayInterval.Fri)
+    .HavingFrequency(FrequencyType.Monthly)
+    .Create();
+        </pre>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Combine Week and Day Intervals</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+var builder = new ScheduleBuilder();
+
+// first and last Mon, Wed, and Fri of every month
+var schedule = builder
+    .DuringMonth(WeekInterval.First | WeekInterval.Last)
+    .OnDaysOfWeek(DayInterval.Mon | DayInterval.Wed | DayInterval.Fri)
+    .HavingFrequency(FrequencyType.Monthly)
+    .Create();
+        </pre>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Persist to Database and Rehydrate Later</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+var builder = new ScheduleBuilder();
+
+// first and last Mon, Wed, and Fri of every month
+var schedule = builder
+    .DuringMonth(WeekInterval.First | WeekInterval.Last)
+    .OnDaysOfWeek(DayInterval.Mon | DayInterval.Wed | DayInterval.Fri)
+    .HavingFrequency(FrequencyType.Monthly)
+    .Create();
+
+<mark>var dayIntervalValue = schedule.DayIntervalValue;
+var weekIntervalValue = schedule.WeeklyIntervalValue;
+var frequencyValue = schedule.FrequencyTypeValue;</mark>
+
+// TODO: Persist these values to a database...
+
+// rehydrate the schedule from the database
+var rehydratedSchedule = builder
+    .DuringMonth(weekIntervalValue)
+    .OnDaysOfWeek(dayIntervalValue)
+    .HavingFrequency(frequencyValue)
+    .Create();
+        </pre>
+    </div>
+</div>
+
+<h3 id="example-quarterly-schedules">Example Quarterly Schedules</h3>
+
+<p>
+    Quarterly schedules need up to four intervals configured: (1) days of week; (2) week(s) of month; (3) month(s) of the quarter;
+    and (4) the quarter(s) of the year. For example suppose the Accounting Department does an audit on the first and third Monday
+    of the first month of each quarter:
+</p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">First Month of Each Quarter</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+var builder = new ScheduleBuilder();
+
+var schedule = builder
+    .DuringQuarter(QuarterInterval.All)
+    .DuringMonthOfQuarter(MonthOfQuarterInterval.First)
+    .DuringMonth(WeekInterval.First | WeekInterval.Third)
+    .OnDaysOfWeek(DayInterval.Mon)
+    .HavingFrequency(FrequencyType.Quarterly)
+    .Create();
+        </pre>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Last Friday of Last Month of First and Third Quarters</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+var builder = new ScheduleBuilder();
+
+var schedule = builder
+    .DuringQuarter(QuarterInterval.First | QuarterInterval.Third)
+    .DuringMonthOfQuarter(MonthOfQuarterInterval.Third)
+    .DuringMonth(WeekInterval.Last)
+    .OnDaysOfWeek(DayInterval.Fri)
+    .Create();
+        </pre>
+    </div>
+</div>
+
+
+<h3 id="example-yearly-schedules">Example Yearly (Anniversary) Schedules</h3>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Ludwig Wittgenstein's Birthday</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+<mark>var anniversary = new ScheduleAnnual(4, 26);</mark>
+var builder = new ScheduleBuilder();
+
+var schedule = builder
+    <mark>.OnAnniversary(anniversary)</mark>
+    .HavingFrequency(FrequencyType.Yearly)
+    .Create();
+        </pre>
+    </div>
+</div>
+
+<h3 id="excluding-holidays">Excluding Holidays</h3>
+
+<p>
+    Sometimes we want to exclude certain dates from our schedules. For example we want to be able to say "every day
+    except holidays." ScheduleWidget provides two low-level objects to support holidays: <code>ScheduleFixedHoliday</code>
+    and <code>ScheduleFloatingHoliday</code>. A fixed holiday is one that always occurs on a certain date:
+</p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Fixed Holiday</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+var independenceDayUS = new ScheduleFixedHoliday(7, 4);
+var saintJamesDaySpain = new ScheduleFixedHoliday(7, 25);
+var emperorBirthdayJapan = new ScheduleFixedHoliday(12, 23);
+        </pre>
+    </div>
+</div>
+
+<p>
+    A <code>ScheduleFloatingHoliday</code> describes dates that float on the calendar like Labor Day in the U.S. which
+    is always the first Monday of September. Note that floating holidays are different from moveable feasts on the
+    Christian liturgical calendar, which are typically based on Easter Sunday.
+</p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Floating Holiday</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+var laborDayUS = new ScheduleFloatingHoliday(MonthOfYear.Sep, DayOfWeek.Monday, WeekInterval.First);
+var bannedBookWeekStartDate = new ScheduleFloatingHoliday(MonthOfYear.Sep, DayOfWeek.Sunday, WeekInterval.Last);
+        </pre>
+    </div>
+</div>
+
+<p>
+    Now we can put it all together to create a <code>TemporalExpressionUnion</code> that holds a collection of dates to be
+    excluded from our schedule:
+</p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Exclude Dates From Schedule</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+// create the temporal union of holiday dates
+<mark>var holidays = new TemporalExpressionUnion();</mark>
+var independenceDayUnitedStates = new ScheduleFixedHoliday(7, 4);
+var laborDayUnitedStates = new ScheduleFloatingHoliday(MonthOfYear.Sep, DayOfWeek.Monday, WeekInterval.First);
+var christmasDay = new ScheduleFixedHoliday(12, 25);
+var ludwigWittgensteinBirthday = new ScheduleFixedHoliday(4, 26);
+
+holidays.Add(independenceDayUnitedStates);
+holidays.Add(laborDayUnitedStates);
+holidays.Add(christmasDay);
+holidays.Add(ludwigWittgensteinBirthday);
+
+var builder = new ScheduleBuilder();
+
+// build a simple daily schedule excluding holidays
+var schedule = builder
+        <mark>.Excluding(holidays)</mark>
+    .HavingFrequency(FrequencyType.Daily)
+    .Create();
+        </pre>
+    </div>
+</div>
+
+<h3 id="example-street-cleaning">Example Street Cleaning</h3>
+
+<p>
+    Martin Fowler, in his white paper <a href="https://martinfowler.com/apsupp/recurring.pdf">Recurring Events for Calendars</a>,
+    describes a very involved schedule. "Street cleaning outside my old house [in Boston]," he writes, "occurs on the first and third Monday
+    of the month between April and October, except for state holidays." Let's model his canonical example in ScheduleWidget. To do so 
+    we have to use the <code>DuringYear</code> method of the <code>ScheduleBuilder</code> class which accepts a <code>ScheduleRangeInYear</code> 
+    to describe the start and end months of the schedule within any given year.
+</p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Boston Street Cleaning Schedule</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+// Boston observes both U.S. Independence Day and Labor Day
+var independenceDayUnitedStates = new ScheduleFixedHoliday(7, 4);
+var laborDayUnitedStates = new ScheduleFloatingHoliday(MonthOfYear.Sep, DayOfWeek.Monday, WeekInterval.First);
+
+var holidays = new TemporalExpressionUnion();
+holidays.Add(independenceDayUnitedStates);
+holidays.Add(laborDayUnitedStates);
+
+<mark>var rangeInYear = new ScheduleRangeInYear(4, 10);</mark> // Apr thru Oct
+
+var builder = new ScheduleBuilder();
+
+var schedule = builder
+    .DuringYear(rangeInYear)
+    .DuringMonth(WeekInterval.First | WeekInterval.Third)
+    .OnDaysOfWeek(DayInterval.Mon)
+    .Excluding(holidays)
+    .HavingFrequency(FrequencyType.Monthly)
+    .Create();
+
+// quick smoke test
+var firstMondayInOctober = new DateTime(2040, 10, 1);
+var thirdMondayInJuly = new DateTime(2040, 7, 16);
+
+Debug.Assert(schedule.IsOccurring(firstMondayInOctober));
+Debug.Assert(schedule.IsOccurring(thirdMondayInJuly));
+        </pre>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Bit Values</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+// remember you can always pass in the bit values
+var schedule = builder  
+    .DuringYear(rangeInYear)
+    .DuringMonth(5) // 1st and 3rd weeks of month
+    .OnDaysOfWeek(2) // Mon
+    .Excluding(holidays)
+.HavingFrequency(3) // monthly
+    .Create();
+        </pre>
+    </div>
+</div>
+
+<h3 id="easter">Easter</h3>
+
+<p>
+    In 725 CE, Saint Bede first defined Easter as "the Sunday following the full Moon which falls on or after the
+    [Spring] equinox." The astronomical equinox can fall either on 19, 20, or 21 March. The ecclesiastical date
+    simplifies things by fixing the equinox to 21 March.
+</p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Easter (Western)</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+// Easter for the year 2029
+var aDate = new ScheduleDate(Easter.GetEasterSunday(2029));
+        </pre>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Easter (Orthodox)</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+// Easter for the year 2029
+var aDate = new ScheduleDate(Easter.GetEasterSunday(2029, EasterCalendar.Orthodox));
+        </pre>
+    </div>
+</div>
+
+<h3 id="support">Support</h3>
+
+<p>
+    Need help? Ctrl-F on the documentation above. I probably covered it there. If not post your question with a <mark>schedulewidget</mark> tag to
+    <a href="https://stackoverflow.com/questions/tagged/schedulewidget">StackOverflow <strong>schedulewidget</strong> tagged questions</a> section.
+    I'll try to answer any questions there as quickly as possible. You can e-mail me directly at james AT squarewidget DOT com. But beware! I'm 
+    horrible at getting back to people one-on-one so StackOverflow is your best bet.
+</p>
+
+<p>Found a bug? Feel free to send it </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
