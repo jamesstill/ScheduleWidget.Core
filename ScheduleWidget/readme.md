@@ -1,5 +1,4 @@
 # ScheduleWidget
-======
 
 ## Scheduling engine to create recurring events for calendars
 
