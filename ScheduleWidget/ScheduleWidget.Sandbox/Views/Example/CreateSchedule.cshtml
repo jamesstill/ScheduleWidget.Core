@@ -158,13 +158,12 @@
                 return;
             }
 
-            if (value == 3) { /* biweekly */
+            if (value == 4) { /* MonthlyDayInMonth */
                 $("#day-selection").show("fast");
-                $("#monthly-interval-selection").hide("fast");
-                return;
+                $("#monthly-interval-selection").show("fast");
             }
 
-            if (value == 4) { /* monthly */
+            if (value == 5) { /* MonthlyDayInWeekOfMonth */
                 $("#day-selection").show("fast");
                 $("#monthly-interval-selection").show("fast");
             }
@@ -188,13 +187,12 @@
                 return;
             }
 
-            if (value == 3) { // biweekly
+            if (value == 4) { // monthly
                 $("#day-selection").show("fast");
-                $("#monthly-interval-selection").hide("fast");
-                return;
+                $("#monthly-interval-selection").show("fast");
             }
 
-            if (value == 4) { // monthly
+            if (value == 5) { // monthly
                 $("#day-selection").show("fast");
                 $("#monthly-interval-selection").show("fast");
             }

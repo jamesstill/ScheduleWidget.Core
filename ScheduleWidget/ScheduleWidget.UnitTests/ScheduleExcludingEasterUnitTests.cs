@@ -22,7 +22,7 @@ namespace ScheduleWidget.UnitTests
                 .DuringMonth(WeekInterval.Third | WeekInterval.Last)
                 .OnDaysOfWeek(DayInterval.Sun)
                 .Excluding(observedHolidays)
-                .HavingFrequency(FrequencyType.Monthly)
+                .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
                 .Create();
 
             // display all dates in the schedule for the next 40 years

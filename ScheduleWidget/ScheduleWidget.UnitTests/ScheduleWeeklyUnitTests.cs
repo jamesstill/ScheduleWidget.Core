@@ -44,7 +44,7 @@ namespace ScheduleWidget.UnitTests
             var schedule = builder
                 .DuringMonth(WeekInterval.First | WeekInterval.Third)
                 .OnDaysOfWeek(DayInterval.Fri)
-                .HavingFrequency(FrequencyType.Monthly)
+                .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
                 .Create();
 
             var date1 = new DateTime(2030, 1, 4);  
@@ -70,7 +70,7 @@ namespace ScheduleWidget.UnitTests
             var schedule = builder
                 .DuringMonth(WeekInterval.First | WeekInterval.Third | WeekInterval.Last)
                 .OnDaysOfWeek(DayInterval.Sat)
-                .HavingFrequency(FrequencyType.Monthly)
+                .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
                 .Create();
 
             var date1 = new DateTime(2035, 1, 6);
@@ -111,7 +111,7 @@ namespace ScheduleWidget.UnitTests
             var schedule = builder
                 .DuringMonth(WeekInterval.First | WeekInterval.Last)
                 .OnDaysOfWeek(DayInterval.Mon | DayInterval.Wed | DayInterval.Fri)
-                .HavingFrequency(FrequencyType.Monthly)
+                .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
                 .Create();
 
             var dayIntervalValue = schedule.DayIntervalValue;
@@ -126,8 +126,6 @@ namespace ScheduleWidget.UnitTests
                 .OnDaysOfWeek(dayIntervalValue)
                 .HavingFrequency(frequencyValue)
                 .Create();
-
-
         }
     }
 }

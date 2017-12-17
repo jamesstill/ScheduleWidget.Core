@@ -16,7 +16,7 @@
 
 <div class="panel-body">
     <code>
-        PM> Install-Package ScheduleWidgetCore -Version 1.0.0
+        PM> Install-Package ScheduleWidgetCore -Version 2.1.0
     </code>
 </div>
 
@@ -44,7 +44,7 @@ var builder = new ScheduleBuilder();
 var schedule = builder
     .DuringMonth(WeekInterval.First)
     .OnDaysOfWeek(DayInterval.Mon)
-    .HavingFrequency(FrequencyType.Monthly)
+    .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
     .Create();
     </pre>
 </div>
@@ -64,7 +64,7 @@ foreach (var date in schedule.Occurrences(during))
     Debug.WriteLine(date.ToShortDateString());
 }
 
-Output CultureInfo("en-US"):
+// Output CultureInfo("en-US"):
 
 1/6/2031
 2/3/2031
@@ -139,11 +139,81 @@ public enum FrequencyType
     None = 0,
     Daily = 1,
     Weekly = 2,
-    Monthly = 3,
-    Quarterly = 4,
-    Yearly = 5
+    MonthlyByDayOfMonth = 3,
+    MonthlyByDayInMonth = 4,
+    MonthlyByDayInWeekOfMonth = 5,
+    Quarterly = 6,
+    Yearly = 7
 }</pre>
     </div>
+</div>
+
+<h4>FrequencyType Explained</h4>
+
+<div class="table-responsive">
+    <table class="table table-condensed">
+        <thead>
+            <tr class="active">
+                <th>FrequencyType</th>
+                <th>Explanation</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Daily (1)</td>
+                <td>Occurs every day of every week.</td>
+            </tr>
+            <tr>
+                <td>Weekly (2)</td>
+                <td>
+                    Occurs on selected days of every week. For example, Physics 101 occurs on 
+                    Mon, Wed, and Fri of every week.
+                </td>
+            </tr>
+            <tr>
+                <td>MonthlyByDayOfMonth (3)</td>
+                <td>
+                    Occurs exactly one day out of each month. For example, the rent payment occurs 
+                    on the 5th of every month regardless of the day of week or the week of month.
+                </td>
+            </tr>
+            <tr>
+                <td>MonthlyByDayInMonth (4)</td>
+                <td>
+                    Occurs on the Nth selected days of each month. For example, Physics 201 occurs on 
+                    the first and third Tue and Thu of the month. 
+                </td>
+            </tr>
+            <tr>
+                <td>MonthlyByDayInWeekOfMonth (5)</td>
+                <td>
+                    Occurs on the selected days of the Nth weeks of each month. For example, Physics 301 
+                    occurs on each Tue and Thu of the first and third weeks of the month. Note that this 
+                    is a subtle distinction from <code>FrequencyType.MonthlyByDayInMonth</code> where the 
+                    <code>WeekInterval</code> describes the Nth occurrence of the day within the month. 
+                    Here the <code>WeekInterval</code> describes the Nth occurrence of the week within 
+                    the month.
+                </td>
+            </tr>
+            <tr>
+                <td>Quarterly (4)</td>
+                <td>
+                    Occurs on selected days of selected weeks on months within a quarter and across 
+                    quarters. This is the most complicated scheduling scenario. For example, an 
+                    accounting audit could be the last Fri of the last month of each quarter. Or more 
+                    complicated: bicycle maintenance could be the first and fourth Mon of the first 
+                    month of the second and fourth quarters. 
+                </td>
+            </tr>
+            <tr>
+                <td>Yearly (5)</td>
+                <td>
+                    Occurs on exactly one day of the year. For example, Julie's birthday is always on 
+                    15 Sep regardless of the day of week or the week of month.
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 <p>
@@ -277,16 +347,34 @@ var schedule = builder
                 </td>
             </tr>
             <tr>
-                <td>Monthly (3)</td>
+                <td>MonthlyByDayOfMonth (3)</td>
                 <td>
                     <code>DuringMonth</code>
                 </td>
                 <td>
-                    The third week of every month
+                    The 24th of each month.
                 </td>
             </tr>
             <tr>
-                <td>Quarterly (4)</td>
+                <td>MonthlyByDayInMonth (4)</td>
+                <td>
+                    <code>DuringMonth</code>
+                </td>
+                <td>
+                    The first and third Mon of each month.
+                </td>
+            </tr>
+            <tr>
+                <td>MonthlyByDayInWeekOfMonth (5)</td>
+                <td>
+                    <code>DuringMonth</code>
+                </td>
+                <td>
+                    Mon of the first and third week of each month.
+                </td>
+            </tr>
+            <tr>
+                <td>Quarterly (6)</td>
                 <td>
                     <code>
                         OnDaysOfWeek<br />
@@ -300,7 +388,7 @@ var schedule = builder
                 </td>
             </tr>
             <tr>
-                <td>Yearly (5)</td>
+                <td>Yearly (7)</td>
                 <td>
                     <code>
                         OnAnniversary
@@ -432,7 +520,7 @@ var builder = new ScheduleBuilder();
 var schedule = builder
     .DuringMonth(WeekInterval.First | WeekInterval.Third)
     .OnDaysOfWeek(DayInterval.Sat)
-    .HavingFrequency(FrequencyType.Monthly)
+    .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
     .Create();
         </pre>
     </div>
@@ -450,7 +538,25 @@ var builder = new ScheduleBuilder();
 var schedule = builder
     .DuringMonth(WeekInterval.First)
     .OnDaysOfWeek(DayInterval.Mon | DayInterval.Wed | DayInterval.Fri)
-    .HavingFrequency(FrequencyType.Monthly)
+    .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
+    .Create();
+        </pre>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">First and Third Week Occurrence</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+var builder = new ScheduleBuilder();
+
+// Mon, Wed, and Fri of the first and third week of every month
+var schedule = builder
+    .DuringMonth(WeekInterval.First | WeekInterval.Third)
+    .OnDaysOfWeek(DayInterval.Mon | DayInterval.Wed | DayInterval.Fri)
+    .HavingFrequency(FrequencyType.MonthlyByDayInWeekOfMonth)
     .Create();
         </pre>
     </div>
@@ -468,7 +574,7 @@ var builder = new ScheduleBuilder();
 var schedule = builder
     .DuringMonth(WeekInterval.First | WeekInterval.Last)
     .OnDaysOfWeek(DayInterval.Mon | DayInterval.Wed | DayInterval.Fri)
-    .HavingFrequency(FrequencyType.Monthly)
+    .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
     .Create();
         </pre>
     </div>
@@ -486,7 +592,7 @@ var builder = new ScheduleBuilder();
 var schedule = builder
     .DuringMonth(WeekInterval.First | WeekInterval.Last)
     .OnDaysOfWeek(DayInterval.Mon | DayInterval.Wed | DayInterval.Fri)
-    .HavingFrequency(FrequencyType.Monthly)
+    .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
     .Create();
 
 <mark>var dayIntervalValue = schedule.DayIntervalValue;
@@ -676,7 +782,7 @@ var schedule = builder
     .DuringMonth(WeekInterval.First | WeekInterval.Third)
     .OnDaysOfWeek(DayInterval.Mon)
     .Excluding(holidays)
-    .HavingFrequency(FrequencyType.Monthly)
+    .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
     .Create();
 
 // quick smoke test
@@ -701,7 +807,7 @@ var schedule = builder
     .DuringMonth(5) // 1st and 3rd weeks of month
     .OnDaysOfWeek(2) // Mon
     .Excluding(holidays)
-.HavingFrequency(3) // monthly
+    .HavingFrequency(4) // monthly by day in month
     .Create();
         </pre>
     </div>
@@ -744,11 +850,14 @@ var aDate = new ScheduleDate(Easter.GetEasterSunday(2029, EasterCalendar.Orthodo
 <p>
     Need help? Ctrl-F on the documentation above. I probably covered it there. If not post your question with a <mark>schedulewidget</mark> tag to
     <a href="https://stackoverflow.com/questions/tagged/schedulewidget">StackOverflow <strong>schedulewidget</strong> tagged questions</a> section.
-    I'll try to answer any questions there as quickly as possible. You can e-mail me directly at james AT squarewidget DOT com. But beware! I'm 
-    horrible at getting back to people one-on-one so StackOverflow is your best bet.
+    I'll try to answer any questions there as quickly as possible.
 </p>
 
-<p>Found a bug? Feel free to send it </p>
+<p>
+    Found a bug? Feel free to make a pull request on GitHub. Or e-mail me directly at james AT squarewidget 
+    DOT com. The chance of my getting it fixed quickly is in direct correlation to the amount of detail you 
+    can send me (steps to repro, current behavior, desired behavior, and so on).
+</p>
 
 
 

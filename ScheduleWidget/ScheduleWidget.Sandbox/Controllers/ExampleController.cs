@@ -93,7 +93,8 @@ namespace ScheduleWidget.Sandbox.Controllers
             {
                 new { ID = 1, Name = "Daily" },
                 new { ID = 2, Name = "Weekly" },
-                new { ID = 4, Name = "Monthly" }
+                new { ID = 4, Name = "MonthlyDayInMonth" },
+                new { ID = 5, Name = "MonthlyDayInWeekOfMonth" }
             };
 
             ViewBag.FrequencyChoices = new SelectList(list, "ID", "Name");

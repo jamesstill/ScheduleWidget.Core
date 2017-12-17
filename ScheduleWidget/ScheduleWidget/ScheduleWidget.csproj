@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>ScheduleWidget.Core</PackageId>
-    <PackageVersion>2.0.0</PackageVersion>
+    <PackageVersion>2.1.0</PackageVersion>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Authors>James Still</Authors>
     <Description>ScheduleWidget handles recurring events for calendars</Description>
@@ -10,5 +10,9 @@
     <PackageTags>schedule recurring events calendar calendars</PackageTags>
     <PackageProjectUrl>http://schedulewidget.azurewebsites.net</PackageProjectUrl>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Version>2.1.0</Version>
+    <PackageReleaseNotes>
+      Minor release adding new frequency types and updating the documentation.
+    </PackageReleaseNotes>
   </PropertyGroup>
 </Project>

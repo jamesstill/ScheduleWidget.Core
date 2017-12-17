@@ -5,7 +5,7 @@ using ScheduleWidget.TemporalExpressions.Base;
 
 namespace ScheduleWidget.Schedule.ConcreteFrequencyBuilders
 {
-    public class MonthlyEventFrequencyBuilder : IEventFrequencyBuilder
+    public class MonthlyDayOfMonthEventFrequencyBuilder : IEventFrequencyBuilder
     {
         public TemporalExpressionUnion Create(ISchedule schedule)
         {

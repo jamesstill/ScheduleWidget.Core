@@ -80,7 +80,7 @@ namespace ScheduleWidget.UnitTests
             var schedule = builder
                 .DuringMonth(WeekInterval.First | WeekInterval.Third)
                 .OnDaysOfWeek(DayInterval.Sat)
-                .HavingFrequency(FrequencyType.Monthly)
+                .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
                 .Create();
 
             var during = new DateRange(DateTime.Today, DateTime.Today.AddMonths(6));
@@ -99,7 +99,7 @@ namespace ScheduleWidget.UnitTests
             var schedule = builder
                 .DuringMonth(WeekInterval.First)
                 .OnDaysOfWeek(DayInterval.Mon)
-                .HavingFrequency(FrequencyType.Monthly)
+                .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
                 .Create();
 
 

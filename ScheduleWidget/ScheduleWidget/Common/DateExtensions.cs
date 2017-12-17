@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 
 namespace ScheduleWidget.Common
 {
@@ -69,6 +70,26 @@ namespace ScheduleWidget.Common
         }
 
         /// <summary>
+        /// Returns the date's DayOfWeek occurring in the Nth week of the date's month.
+        /// For example, if the date is a Fri in Jan 2040 and n == 3 the method will 
+        /// return the Fri in the third week of Jan or 20 Jan 2040.
+        /// </summary>
+        /// <param name="aDate"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        internal static DateTime OccurrenceNthWeekInMonth(this DateTime aDate, int n)
+        {
+            // get all days of week in the month for the date's day of week
+            var dates = Enumerable.Range(1, DateTime.DaysInMonth(aDate.Year, aDate.Month))
+                .Select(d => new DateTime(aDate.Year, aDate.Month, d))
+                .Where(dow => dow.DayOfWeek == aDate.DayOfWeek)
+                .ToList();
+
+            var value = dates.FirstOrDefault(d => d.ToWeekOfMonth() == n);
+            return value;
+        }
+
+        /// <summary>
         /// Returns the Nth occurrence of the date argument's DayOfWeek (e.g, Friday).
         /// For example, if the date is a Friday in Jan 2040 and n == 3 the method 
         /// will return the 3rd Friday in Jan 2040 or 20 Jan 2040.
@@ -111,7 +132,7 @@ namespace ScheduleWidget.Common
             Debug.Assert(delta <= 0);
             return lastDayOfMonth.AddDays(delta);
         }
-        
+
         /// <summary>
         /// Returns the last day of the date argument's month. For example,
         /// if the date is 10 Jan 2040 then the method will return 31 Jan 2040.

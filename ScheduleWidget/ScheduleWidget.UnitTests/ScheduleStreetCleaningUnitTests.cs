@@ -28,7 +28,7 @@ namespace ScheduleWidget.UnitTests
                 .DuringMonth(WeekInterval.First | WeekInterval.Third)
                 .OnDaysOfWeek(DayInterval.Mon)
                 .Excluding(observedHolidays)
-                .HavingFrequency(FrequencyType.Monthly)
+                .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
                 .Create();
 
             var firstMondayInOctober = new DateTime(2040, 10, 1);

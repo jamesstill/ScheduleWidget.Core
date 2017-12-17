@@ -301,8 +301,24 @@ namespace ScheduleWidget.Sandbox.Models
                     Frequency = (int) FrequencyType.Weekly;
                     break;
 
+                case 3:
+                    Frequency = (int)FrequencyType.MonthlyByDayOfMonth;
+                    break;
+
                 case 4:
-                    Frequency = (int)FrequencyType.Monthly;
+                    Frequency = (int)FrequencyType.MonthlyByDayInMonth;
+                    break;
+
+                case 5:
+                    Frequency = (int)FrequencyType.MonthlyByDayInWeekOfMonth;
+                    break;
+
+                case 6:
+                    Frequency = (int)FrequencyType.Quarterly;
+                    break;
+
+                case 7:
+                    Frequency = (int)FrequencyType.Yearly;
                     break;
 
                 default:
