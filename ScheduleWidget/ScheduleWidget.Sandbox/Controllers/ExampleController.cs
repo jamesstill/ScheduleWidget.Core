@@ -31,6 +31,7 @@ namespace ScheduleWidget.Sandbox.Controllers
             var scheduleViewModel  = new ScheduleViewModel()
             {
                 UserId = userId,
+                Title = "My Schedule",
                 StartDate = eventDate,
                 StartTime = new TimeSpan(DateTime.Now.Hour, 0, 0),
                 EndTime = new TimeSpan(DateTime.Now.Hour + 1, 0, 0)
@@ -93,8 +94,10 @@ namespace ScheduleWidget.Sandbox.Controllers
             {
                 new { ID = 1, Name = "Daily" },
                 new { ID = 2, Name = "Weekly" },
-                new { ID = 4, Name = "MonthlyDayInMonth" },
-                new { ID = 5, Name = "MonthlyDayInWeekOfMonth" }
+                new { ID = 4, Name = "MonthlyByDayInMonth" },
+                new { ID = 5, Name = "MonthlyByDayInWeekOfMonth" },
+                new { ID = 6, Name = "Quarterly" },
+                new { ID = 7, Name = "Yearly" },
             };
 
             ViewBag.FrequencyChoices = new SelectList(list, "ID", "Name");
@@ -138,14 +141,7 @@ namespace ScheduleWidget.Sandbox.Controllers
                 return BuildCalendarObjects(scheduleViewModel);
             }
 
-            // use the ScheduleWidget engine to calculate the dates in the schedule
-            var builder = new ScheduleBuilder();
-
-            var schedule = builder
-                .OnDaysOfWeek(scheduleViewModel.Days)
-                .DuringMonth(scheduleViewModel.Weeks)
-                .HavingFrequency(scheduleViewModel.Frequency)
-                .Create();
+            var schedule = scheduleViewModel.BuildSchedule();
 
             // use the calendar start date or the schedule start date whichever is later
             var start = (scheduleViewModel.StartDate > calendarRange.StartDateTime)

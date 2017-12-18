@@ -7,18 +7,18 @@
 <h2>Create Schedule</h2>
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-8">
         <form asp-action="CreateSchedule">
             @Html.HiddenFor(model => model.ID)
             @Html.HiddenFor(model => model.UserId)
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="recurrence-details form-group">
-                <label>Create Schedule</label>     
                 <div class="form-group">
                     <label asp-for="Title" class="control-label"></label>
-                    <input asp-for="Title" class="form-control" />
+                    <input asp-for="Title" class="form-control col-md-4" />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
+                <p>&nbsp;</p>
                 <div id="schedule-recurrence-selection" class="form-group">
                     @Html.RadioButton("ScheduleRecurrence", "OneTime", new { id = "rb-one-time-event" })&nbsp;One-time only
                     @Html.RadioButton("ScheduleRecurrence", "Repeat", new { id = "rb-recurrence-event" })&nbsp;Repeat
@@ -27,92 +27,115 @@
                     </span>
                 </div>
                 <div id="day-selection" class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsSundaySelected" /> Sun
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsMondaySelected" /> Mon
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsTuesdaySelected" /> Tue
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsWednesdaySelected" /> Wed
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsThursdaySelected" /> Thu
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsFridaySelected" /> Fri
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsSaturdaySelected" /> Sat
-                        </label>
-                    </div>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsSundaySelected" /> Sun
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsMondaySelected" /> Mon
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsTuesdaySelected" /> Tue
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsWednesdaySelected" /> Wed
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsThursdaySelected" /> Thu
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsFridaySelected" /> Fri
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsSaturdaySelected" /> Sat
+                    </label>
                 </div>
-                <div id="monthly-interval-selection" class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsFirstWeekOfMonthSelected" /> First
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsSecondWeekOfMonthSelected" /> Second
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsThirdWeekOfMonthSelected" /> Third
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsFourthWeekOfMonthSelected" /> Fourth
-                        </label>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="IsLastWeekOfMonthSelected" /> Last Week of Every Month
-                        </label>
-                    </div>
+                <div id="monthly-interval-by-day-in-month-selection" class="form-group">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsFirstWeekIntervalSelected" /> First
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsSecondWeekIntervalSelected" /> Second
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsThirdWeekIntervalSelected" /> Third
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsFourthWeekIntervalSelected" /> Fourth
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsLastWeekIntervalSelected" /> Last
+                    </label>
+                    <div>For example: <em>every second and fourth Mon and Wed of the month</em></div>
+                </div>
+                <div id="monthly-interval-by-day-in-week-of-month-selection" class="form-group">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsFirstWeekIntervalSelected" /> In First Week
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsSecondWeekIntervalSelected" /> In Second Week
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsThirdWeekIntervalSelected" /> In Third Week
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsFourthWeekIntervalSelected" /> In Fourth Week
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsLastWeekIntervalSelected" /> In Last Week of Every Month
+                    </label>
+                    <div>For example: <em>every Mon and Wed of the second and fourth weeks of the month</em></div>
                 </div> 
-            </div>
-            <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input id="start-date" asp-for="StartDate" type="date" class="form-control" />
-                <span asp-validation-for="StartDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StartTime" class="control-label"></label>
-                <input asp-for="StartTime" type="time" class="form-control" />
-                <span asp-validation-for="StartTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input id="end-date" asp-for="EndDate" type="date" class="form-control" />
-                <span asp-validation-for="EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndTime" class="control-label"></label>
-                <input asp-for="EndTime" type="time" class="form-control" />
-                <span asp-validation-for="EndTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <div id="month-of-quarter-selection" class="form-group">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsFirstMonthOfQuarterSelected" /> First 
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsSecondMonthOfQuarterSelected" /> Second 
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsThirdMonthOfQuarterSelected" /> Third Month In Quarter
+                    </label>
+                    <div>For example: <em>the first and third months in each quarter</em></div>
+                </div> 
+                <div id="quarter-selection" class="form-group">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsFirstQuarterSelected" /> First 
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsSecondQuarterSelected" /> Second 
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsThirdQuarterSelected" /> Third 
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" asp-for="IsFourthQuarterSelected" /> Fourth Quarter
+                    </label>
+                    <div>For example: <em>the first and fourth quarters</em></div>
+                </div> 
+                <div class="form-group col-md-4">
+                    <label asp-for="StartDate" class="control-label"></label>
+                    <input id="start-date" asp-for="StartDate" type="date" class="form-control" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-2">
+                    <label asp-for="StartTime" class="control-label"></label>
+                    <input asp-for="StartTime" type="time" class="form-control" />
+                    <span asp-validation-for="StartTime" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-4">
+                    <label asp-for="EndDate" class="control-label"></label>
+                    <input id="end-date" asp-for="EndDate" type="date" class="form-control" />
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-2">
+                    <label asp-for="EndTime" class="control-label"></label>
+                    <input asp-for="EndTime" type="time" class="form-control" />
+                    <span asp-validation-for="EndTime" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-2">
+                    <br />
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
             </div>
         </form>
     </div>
@@ -148,24 +171,43 @@
 
             if (value == 1) { /* daily */
                 $("#day-selection").hide("fast");
-                $("#monthly-interval-selection").hide("fast");
+                $("#monthly-interval-by-day-in-month-selection").hide("fast");
+                $("#monthly-interval-by-day-in-week-of-month-selection").hide("fast");
+                $("#month-of-quarter-selection").hide("fast");
+                $("#quarter-selection").hide("fast");
                 return;
             }
 
             if (value == 2) { /* weekly */
                 $("#day-selection").show("fast");
-                $("#monthly-interval-selection").hide("fast");
+                $("#monthly-interval-by-day-in-month-selection").hide("fast");
+                $("#monthly-interval-by-day-in-week-of-month-selection").hide("fast");
+                $("#month-of-quarter-selection").hide("fast");
+                $("#quarter-selection").hide("fast");
                 return;
             }
 
             if (value == 4) { /* MonthlyDayInMonth */
                 $("#day-selection").show("fast");
-                $("#monthly-interval-selection").show("fast");
+                $("#monthly-interval-by-day-in-week-of-month-selection").hide("fast");
+                $("#monthly-interval-by-day-in-month-selection").show("fast");
+                $("#month-of-quarter-selection").hide("fast");
+                $("#quarter-selection").hide("fast");
             }
 
             if (value == 5) { /* MonthlyDayInWeekOfMonth */
                 $("#day-selection").show("fast");
-                $("#monthly-interval-selection").show("fast");
+                $("#monthly-interval-by-day-in-month-selection").hide("fast");
+                $("#monthly-interval-by-day-in-week-of-month-selection").show("fast");
+                $("#month-of-quarter-selection").hide("fast");
+                $("#quarter-selection").hide("fast");
+            }
+
+            if (value == 6) { /* Quarterly */
+                $("#day-selection").show("fast");
+                $("#monthly-interval-by-day-in-month-selection").show("fast");
+                $("#month-of-quarter-selection").show("fast");
+                $("#quarter-selection").show("fast");
             }
         });
 
@@ -189,12 +231,19 @@
 
             if (value == 4) { // monthly
                 $("#day-selection").show("fast");
-                $("#monthly-interval-selection").show("fast");
+                $("#monthly-interval-by-day-in-month-selection").show("fast");
             }
 
             if (value == 5) { // monthly
                 $("#day-selection").show("fast");
-                $("#monthly-interval-selection").show("fast");
+                $("#monthly-interval-by-day-in-week-of-month-selection").show("fast");
+            }
+
+            if (value == 6) { /* quarterly */
+                $("#day-selection").show("fast");
+                $("#monthly-interval-by-day-in-month-selection").show("fast");
+                $("#month-of-quarter-selection").show("fast");
+                $("#quarter-selection").show("fast");
             }
         }
 
@@ -213,7 +262,12 @@
             $("#day-selection").hide("fast");
 
             // hide the monthly interval options
-            $("#monthly-interval-selection").hide("fast");
+            $("#monthly-interval-by-day-in-month-selection").hide("fast");
+            $("#monthly-interval-by-day-in-week-of-month-selection").hide("fast");
+
+            // hide the quarterly controls
+            $("#month-of-quarter-selection").hide("fast");
+            $("#quarter-selection").hide("fast");
         }
 
     </script>

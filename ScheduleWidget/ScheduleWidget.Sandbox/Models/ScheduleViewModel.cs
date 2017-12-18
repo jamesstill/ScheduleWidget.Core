@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using ScheduleWidget.Common;
 using ScheduleWidget.Schedule;
+using ScheduleWidget.TemporalExpressions;
 
 namespace ScheduleWidget.Sandbox.Models
 {
@@ -44,6 +45,10 @@ namespace ScheduleWidget.Sandbox.Models
         public int Days { get; set; }
 
         public int Weeks { get; set; }
+
+        public int MonthsOfQuarter { get; set; }
+
+        public int Quarters { get; set; }
 
         [Display(Name = "Start Date")]
         [Required(ErrorMessage = @"Please provide a start date.")]
@@ -191,7 +196,7 @@ namespace ScheduleWidget.Sandbox.Models
             }
         }
 
-        public bool IsFirstWeekOfMonthSelected
+        public bool IsFirstWeekIntervalSelected
         {
             get => WeekIntervalOptions.HasFlag(WeekInterval.First);
             set
@@ -205,7 +210,7 @@ namespace ScheduleWidget.Sandbox.Models
             }
         }
 
-        public bool IsSecondWeekOfMonthSelected
+        public bool IsSecondWeekIntervalSelected
         {
             get => WeekIntervalOptions.HasFlag(WeekInterval.Second);
             set
@@ -219,7 +224,7 @@ namespace ScheduleWidget.Sandbox.Models
             }
         }
 
-        public bool IsThirdWeekOfMonthSelected
+        public bool IsThirdWeekIntervalSelected
         {
             get => WeekIntervalOptions.HasFlag(WeekInterval.Third);
             set
@@ -233,7 +238,7 @@ namespace ScheduleWidget.Sandbox.Models
             }
         }
 
-        public bool IsFourthWeekOfMonthSelected
+        public bool IsFourthWeekIntervalSelected
         {
             get => WeekIntervalOptions.HasFlag(WeekInterval.Fourth);
             set
@@ -247,7 +252,7 @@ namespace ScheduleWidget.Sandbox.Models
             }
         }
 
-        public bool IsLastWeekOfMonthSelected
+        public bool IsLastWeekIntervalSelected
         {
             get => WeekIntervalOptions.HasFlag(WeekInterval.Last);
             set
@@ -257,6 +262,104 @@ namespace ScheduleWidget.Sandbox.Models
                 if (!WeekIntervalOptions.HasFlag(WeekInterval.Last))
                 {
                     WeekIntervalOptions |= WeekInterval.Last;
+                }
+            }
+        }
+
+        public bool IsFirstMonthOfQuarterSelected
+        {
+            get => MonthOfQuarterIntervalOptions.HasFlag(MonthOfQuarterInterval.First);
+            set
+            {
+                if (!value) return;
+
+                if (!MonthOfQuarterIntervalOptions.HasFlag(MonthOfQuarterInterval.First))
+                {
+                    MonthOfQuarterIntervalOptions |= MonthOfQuarterInterval.First;
+                }
+            }
+        }
+
+        public bool IsSecondMonthOfQuarterSelected
+        {
+            get => MonthOfQuarterIntervalOptions.HasFlag(MonthOfQuarterInterval.Second);
+            set
+            {
+                if (!value) return;
+
+                if (!MonthOfQuarterIntervalOptions.HasFlag(MonthOfQuarterInterval.Second))
+                {
+                    MonthOfQuarterIntervalOptions |= MonthOfQuarterInterval.Second;
+                }
+            }
+        }
+
+        public bool IsThirdMonthOfQuarterSelected
+        {
+            get => MonthOfQuarterIntervalOptions.HasFlag(MonthOfQuarterInterval.Third);
+            set
+            {
+                if (!value) return;
+
+                if (!MonthOfQuarterIntervalOptions.HasFlag(MonthOfQuarterInterval.Third))
+                {
+                    MonthOfQuarterIntervalOptions |= MonthOfQuarterInterval.Third;
+                }
+            }
+        }
+
+        public bool IsFirstQuarterSelected
+        {
+            get => QuarterIntervalOptions.HasFlag(QuarterInterval.First);
+            set
+            {
+                if (!value) return;
+
+                if (!QuarterIntervalOptions.HasFlag(QuarterInterval.First))
+                {
+                    QuarterIntervalOptions |= QuarterInterval.First;
+                }
+            }
+        }
+
+        public bool IsSecondQuarterSelected
+        {
+            get => QuarterIntervalOptions.HasFlag(QuarterInterval.Second);
+            set
+            {
+                if (!value) return;
+
+                if (!QuarterIntervalOptions.HasFlag(QuarterInterval.Second))
+                {
+                    QuarterIntervalOptions |= QuarterInterval.Second;
+                }
+            }
+        }
+
+        public bool IsThirdQuarterSelected
+        {
+            get => QuarterIntervalOptions.HasFlag(QuarterInterval.Third);
+            set
+            {
+                if (!value) return;
+
+                if (!QuarterIntervalOptions.HasFlag(QuarterInterval.Third))
+                {
+                    QuarterIntervalOptions |= QuarterInterval.Third;
+                }
+            }
+        }
+
+        public bool IsFourthQuarterSelected
+        {
+            get => QuarterIntervalOptions.HasFlag(QuarterInterval.Fourth);
+            set
+            {
+                if (!value) return;
+
+                if (!QuarterIntervalOptions.HasFlag(QuarterInterval.Fourth))
+                {
+                    QuarterIntervalOptions |= QuarterInterval.Fourth;
                 }
             }
         }
@@ -279,12 +382,27 @@ namespace ScheduleWidget.Sandbox.Models
             set => Days = (int)value;
         }
 
+        public MonthOfQuarterInterval MonthOfQuarterIntervalOptions
+        {
+            get => (MonthOfQuarterInterval)MonthsOfQuarter;
+            set => MonthsOfQuarter = (int)value;
+        }
+
+        public QuarterInterval QuarterIntervalOptions
+        {
+            get => (QuarterInterval)Quarters;
+            set => Quarters = (int)value;
+        }
+
         public ISchedule BuildSchedule()
         {
             var builder = new ScheduleBuilder();
             return builder
-                .DuringMonth(Weeks)
                 .OnDaysOfWeek(Days)
+                .DuringMonth(Weeks)
+                .DuringMonthOfQuarter(MonthsOfQuarter)
+                .DuringQuarter(Quarters)
+                .OnAnniversary(new ScheduleAnnual(StartDate.Month, StartDate.Day))
                 .HavingFrequency(Frequency)
                 .Create();
         } 
