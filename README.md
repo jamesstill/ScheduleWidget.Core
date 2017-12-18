@@ -1,8 +1,8 @@
-# ScheduleWidget
+s# ScheduleWidget
 
 ## Scheduling engine to create recurring events for calendars
 
-ScheduleWidget is a scheduling engine that creates recurring events for calendar. 
+ScheduleWidget is a scheduling engine that creates recurring events for calendars. 
 It is an implementation based on Martin Fowler's white paper [Recurring Events for Calendars](https://martinfowler.com/apsupp/recurring.pdf) 
 in which he describes the software design. This is a complete .NET Core 2.0 rewrite of the popular .NET Framework version. 
 Suppose we want to create a schedule that describes the first Monday of every month:
