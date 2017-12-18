@@ -12,7 +12,7 @@ Suppose we want to create a schedule that describes the first Monday of every mo
 var schedule = builder
     .DuringMonth(WeekInterval.First)
     .OnDaysOfWeek(DayInterval.Mon)
-    .HavingFrequency(FrequencyType.Monthly)
+    .HavingFrequency(FrequencyType.MonthlyByDayInMonth)
     .Create();
 ```
 Once we create a `Schedule` we can ask it questions. The `Schedule` exposes methods (documented in more detail below) 
