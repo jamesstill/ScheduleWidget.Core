@@ -1,4 +1,4 @@
-s# ScheduleWidget
+# ScheduleWidget
 
 ## Scheduling engine to create recurring events for calendars
 
@@ -7,7 +7,8 @@ It is an implementation based on Martin Fowler's white paper [Recurring Events f
 in which he describes the software design. This is a complete .NET Core 2.0 rewrite of the popular .NET Framework version. 
 Suppose we want to create a schedule that describes the first Monday of every month:
 
-```var builder = new ScheduleBuilder();
+```
+var builder = new ScheduleBuilder();
 
 var schedule = builder
     .DuringMonth(WeekInterval.First)
@@ -19,7 +20,8 @@ Once we create a `Schedule` we can ask it questions. The `Schedule` exposes meth
 that return *schedule occurrences* (concrete `DateTime` value objects) over a defined period of time. Suppose `DateTime.Today` 
 is 20 December 2030:
 
-```var during = new DateRange(DateTime.Today, DateTime.Today.AddMonths(6));
+```
+var during = new DateRange(DateTime.Today, DateTime.Today.AddMonths(6));
 
 foreach (var date in schedule.Occurrences(during))
 {
