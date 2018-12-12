@@ -51,7 +51,7 @@ var schedule = builder
 
 <p>
     Once we create a <code>Schedule</code> we can ask it questions. The <code>Schedule</code> exposes methods (documented
-    in more detail below) that return <em>schedule occurrences</em> (concrete <code>DateTime</code> value objects) over a 
+    in more detail below) that return <em>schedule occurrences</em> (concrete <code>DateTime</code> value objects) over a
     defined period of time. Suppose <code>DateTime.Today</code> is 20 December 2030:
 </p>
 
@@ -119,6 +119,7 @@ DuringMonthOfQuarter(MonthOfQuarterInterval);
 DuringQuarter(QuarterInterval);
 DuringYear(ScheduleRangeInYear);
 OnAnniversary(ScheduleAnnual);
+OnMonthly(ScheduleDayOfMonth);
 Excluding(TemporalExpressionUnion);
 HavingFrequency(FrequencyType);</pre>
     </div>
@@ -166,49 +167,49 @@ public enum FrequencyType
             <tr>
                 <td>Weekly (2)</td>
                 <td>
-                    Occurs on selected days of every week. For example, Physics 101 occurs on 
+                    Occurs on selected days of every week. For example, Physics 101 occurs on
                     Mon, Wed, and Fri of every week.
                 </td>
             </tr>
             <tr>
                 <td>MonthlyByDayOfMonth (3)</td>
                 <td>
-                    Occurs exactly one day out of each month. For example, the rent payment occurs 
+                    Occurs exactly one day out of each month. For example, the rent payment occurs
                     on the 5th of every month regardless of the day of week or the week of month.
                 </td>
             </tr>
             <tr>
                 <td>MonthlyByDayInMonth (4)</td>
                 <td>
-                    Occurs on the Nth selected days of each month. For example, Physics 201 occurs on 
-                    the first and third Tue and Thu of the month. 
+                    Occurs on the Nth selected days of each month. For example, Physics 201 occurs on
+                    the first and third Tue and Thu of the month.
                 </td>
             </tr>
             <tr>
                 <td>MonthlyByDayInWeekOfMonth (5)</td>
                 <td>
-                    Occurs on the selected days of the Nth weeks of each month. For example, Physics 301 
-                    occurs on each Tue and Thu of the first and third weeks of the month. Note that this 
-                    is a subtle distinction from <code>FrequencyType.MonthlyByDayInMonth</code> where the 
-                    <code>WeekInterval</code> describes the Nth occurrence of the day within the month. 
-                    Here the <code>WeekInterval</code> describes the Nth occurrence of the week within 
+                    Occurs on the selected days of the Nth weeks of each month. For example, Physics 301
+                    occurs on each Tue and Thu of the first and third weeks of the month. Note that this
+                    is a subtle distinction from <code>FrequencyType.MonthlyByDayInMonth</code> where the
+                    <code>WeekInterval</code> describes the Nth occurrence of the day within the month.
+                    Here the <code>WeekInterval</code> describes the Nth occurrence of the week within
                     the month.
                 </td>
             </tr>
             <tr>
                 <td>Quarterly (4)</td>
                 <td>
-                    Occurs on selected days of selected weeks on months within a quarter and across 
-                    quarters. This is the most complicated scheduling scenario. For example, an 
-                    accounting audit could be the last Fri of the last month of each quarter. Or more 
-                    complicated: bicycle maintenance could be the first and fourth Mon of the first 
-                    month of the second and fourth quarters. 
+                    Occurs on selected days of selected weeks on months within a quarter and across
+                    quarters. This is the most complicated scheduling scenario. For example, an
+                    accounting audit could be the last Fri of the last month of each quarter. Or more
+                    complicated: bicycle maintenance could be the first and fourth Mon of the first
+                    month of the second and fourth quarters.
                 </td>
             </tr>
             <tr>
                 <td>Yearly (5)</td>
                 <td>
-                    Occurs on exactly one day of the year. For example, Julie's birthday is always on 
+                    Occurs on exactly one day of the year. For example, Julie's birthday is always on
                     15 Sep regardless of the day of week or the week of month.
                 </td>
             </tr>
@@ -510,6 +511,23 @@ Debug.Assert(!schedule.IsOccurring(date4));
 
 <div class="panel panel-default">
     <div class="panel-heading">
+        <h3 class="panel-title">The 24th Of Each Month</h3>
+    </div>
+    <div class="panel-body">
+        <pre>
+<mark>var monthly = new ScheduleDayOfMonth(24);</mark>
+var builder = new ScheduleBuilder();
+
+var schedule = builder
+        <mark>.OnMonthly(monthly)</mark>
+    .HavingFrequency(FrequencyType.MonthlyByDayOfMonth)
+    .Create();
+        </pre>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
         <h3 class="panel-title">Multiple Week Intervals</h3>
     </div>
     <div class="panel-body">
@@ -669,7 +687,7 @@ var schedule = builder
 var builder = new ScheduleBuilder();
 
 var schedule = builder
-    <mark>.OnAnniversary(anniversary)</mark>
+        <mark>.OnAnniversary(anniversary)</mark>
     .HavingFrequency(FrequencyType.Yearly)
     .Create();
         </pre>
@@ -754,8 +772,8 @@ var schedule = builder
 <p>
     Martin Fowler, in his white paper <a href="https://martinfowler.com/apsupp/recurring.pdf">Recurring Events for Calendars</a>,
     describes a very involved schedule. "Street cleaning outside my old house [in Boston]," he writes, "occurs on the first and third Monday
-    of the month between April and October, except for state holidays." Let's model his canonical example in ScheduleWidget. To do so 
-    we have to use the <code>DuringYear</code> method of the <code>ScheduleBuilder</code> class which accepts a <code>ScheduleRangeInYear</code> 
+    of the month between April and October, except for state holidays." Let's model his canonical example in ScheduleWidget. To do so
+    we have to use the <code>DuringYear</code> method of the <code>ScheduleBuilder</code> class which accepts a <code>ScheduleRangeInYear</code>
     to describe the start and end months of the schedule within any given year.
 </p>
 
@@ -854,9 +872,9 @@ var aDate = new ScheduleDate(Easter.GetEasterSunday(2029, EasterCalendar.Orthodo
 </p>
 
 <p>
-    Found a bug? You can e-mail me directly at james AT squarewidget DOT com. The chance of my getting 
-    it fixed quickly is in direct correlation to the amount of detail you can send me (steps to repro, 
-    current behavior, desired behavior, and so on). Pull requests most welcome! Please study the code 
+    Found a bug? You can e-mail me directly at james AT squarewidget DOT com. The chance of my getting
+    it fixed quickly is in direct correlation to the amount of detail you can send me (steps to repro,
+    current behavior, desired behavior, and so on). Pull requests most welcome! Please study the code
     first and make sure your fix is in line with the software design.
 </p>
 

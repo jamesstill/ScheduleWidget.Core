@@ -1,8 +1,8 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using ScheduleWidget.Common;
+﻿using ScheduleWidget.Common;
 using ScheduleWidget.Schedule;
 using ScheduleWidget.TemporalExpressions;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ScheduleWidget.Sandbox.Models
 {
@@ -403,6 +403,7 @@ namespace ScheduleWidget.Sandbox.Models
                 .DuringMonthOfQuarter(MonthsOfQuarter)
                 .DuringQuarter(Quarters)
                 .OnAnniversary(new ScheduleAnnual(StartDate.Month, StartDate.Day))
+                .OnMonthly(new ScheduleDayOfMonth(StartDate.Day))
                 .HavingFrequency(Frequency)
                 .Create();
         } 

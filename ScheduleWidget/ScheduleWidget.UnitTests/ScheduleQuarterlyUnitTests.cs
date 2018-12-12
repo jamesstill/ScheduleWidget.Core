@@ -67,7 +67,7 @@ namespace ScheduleWidget.UnitTests
                 .DuringMonthOfQuarter(1)
                 .DuringMonth(5)
                 .OnDaysOfWeek(2)
-                .HavingFrequency(3)
+                .HavingFrequency(2)
                 .Create();
 
             var firstMonOfJanQ1 = new DateTime(2030, 1, 7);

@@ -1,9 +1,9 @@
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ScheduleWidget.TemporalExpressions;
-using ScheduleWidget.Schedule;
 using ScheduleWidget.Common;
+using ScheduleWidget.Schedule;
+using ScheduleWidget.TemporalExpressions;
 using ScheduleWidget.TemporalExpressions.Base;
+using System;
 
 namespace ScheduleWidget.UnitTests
 {
@@ -53,7 +53,7 @@ namespace ScheduleWidget.UnitTests
             var builder = new ScheduleBuilder();
 
             var schedule = builder
-                .HavingFrequency(3) // monthly
+                .HavingFrequency(2) // monthly by day in week
                 .DuringYear(rangeInYear)
                 .DuringMonth(5) // 1st and 3rd weeks of month
                 .OnDaysOfWeek(2) // Mon

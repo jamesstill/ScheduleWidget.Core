@@ -1,7 +1,5 @@
-﻿using System;
-using ScheduleWidget.Common;
-using ScheduleWidget.TemporalExpressions;
-using ScheduleWidget.TemporalExpressions.Base;
+﻿using ScheduleWidget.TemporalExpressions.Base;
+using System;
 
 namespace ScheduleWidget.Schedule.ConcreteFrequencyBuilders
 {
@@ -9,24 +7,13 @@ namespace ScheduleWidget.Schedule.ConcreteFrequencyBuilders
     {
         public TemporalExpressionUnion Create(ISchedule schedule)
         {
-            if (schedule.WeekInterval == WeekInterval.None)
-                throw new ArgumentException("WeekInterval must be set for schedules with a monthly frequency.");
+           if (schedule.Monthly == null)
+                throw new ArgumentException("ScheduleDayOfMonth must be set for schedules with a " +
+                                             "monthly by day of month frequency.");
 
-            if (schedule.DayInterval == DayInterval.None)
-                throw new ArgumentException("DayInterval must be set for schedules with a monthly frequency.");
-
+            var monthly = schedule.Monthly;
             var union = new TemporalExpressionUnion();
-            var weeklyIntervals = union.GetFlags(schedule.WeekInterval);
-            foreach (var weeklyInterval in weeklyIntervals)
-            {
-                var daysOfWeek = union.GetFlags(schedule.DayInterval);
-                foreach (var dayOfWeek in daysOfWeek)
-                {
-                    var dayInMonth = new ScheduleDayInMonth((DayInterval)dayOfWeek, (WeekInterval)weeklyInterval);
-                    union.Add(dayInMonth);
-                }
-            }
-
+            union.Add(monthly);
             return union;
         }
     }
