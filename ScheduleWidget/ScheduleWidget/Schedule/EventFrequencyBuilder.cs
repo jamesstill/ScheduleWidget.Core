@@ -20,6 +20,10 @@ namespace ScheduleWidget.Schedule
                     frequencyBuilder = new WeeklyEventFrequencyBuilder();
                     break;
 
+                case FrequencyType.DayOfMonth:
+                    frequencyBuilder = new DayOfMonthEventFrequencyBuilder();
+                    break;
+
                 case FrequencyType.MonthlyByDayOfMonth:
                     frequencyBuilder = new MonthlyDayOfMonthEventFrequencyBuilder();
                     break;

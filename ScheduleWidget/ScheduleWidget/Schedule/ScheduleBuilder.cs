@@ -57,6 +57,12 @@ namespace ScheduleWidget.Schedule
             return this;
         }
 
+        public ScheduleBuilder OnDayOfMonth(int dayValue)
+        {
+            Schedule.SetDayOfMonth(dayValue);
+            return this;
+        }
+
         public ScheduleBuilder DuringMonth(WeekInterval interval)
         {
             this.DuringMonth((int)interval);

@@ -15,6 +15,8 @@ namespace ScheduleWidget.Schedule
 
         public int FrequencyTypeValue => (int) FrequencyType;
 
+        public int DayOfMonth { get; private set; }
+        
         public DayInterval DayInterval { get; private set; }
 
         public int DayIntervalValue => (int) DayInterval;
@@ -45,6 +47,11 @@ namespace ScheduleWidget.Schedule
         public void SetDaysOfWeek(DayInterval interval)
         {
             DayInterval = interval;
+        }
+
+        public void SetDayOfMonth(int dayValue)
+        {
+            DayOfMonth = dayValue;
         }
 
         public void SetMonthlyInterval(WeekInterval interval)

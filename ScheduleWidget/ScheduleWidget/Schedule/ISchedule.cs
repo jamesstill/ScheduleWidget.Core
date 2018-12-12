@@ -11,6 +11,7 @@ namespace ScheduleWidget.Schedule
         FrequencyType FrequencyType { get; }
 
         int FrequencyTypeValue { get; }
+        int DayOfMonth { get; }
 
         DayInterval DayInterval { get; }
 

@@ -12,6 +12,7 @@
         MonthlyByDayInMonth = 4,
         MonthlyByDayInWeekOfMonth = 5,
         Quarterly = 6,
-        Yearly = 7
+        Yearly = 7,
+        DayOfMonth = 8
     }
 }
