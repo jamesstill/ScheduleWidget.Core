@@ -1,7 +1,6 @@
-﻿using System;
-using ScheduleWidget.Common;
-using ScheduleWidget.TemporalExpressions.Base;
+﻿using ScheduleWidget.Common;
 using ScheduleWidget.TemporalExpressions;
+using ScheduleWidget.TemporalExpressions.Base;
 
 namespace ScheduleWidget.Schedule
 {
@@ -96,6 +95,12 @@ namespace ScheduleWidget.Schedule
         public ScheduleBuilder OnAnniversary(ScheduleAnnual annual)
         {
             Schedule.SetAnniversary(annual);
+            return this;
+        }
+
+        public ScheduleBuilder OnMonthly(ScheduleDayOfMonth monthly)
+        {
+            Schedule.SetMonthly(monthly);
             return this;
         }
 

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ScheduleWidget.Common;
+using ScheduleWidget.TemporalExpressions;
+using ScheduleWidget.TemporalExpressions.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using ScheduleWidget.TemporalExpressions.Base;
-using ScheduleWidget.Common;
-using ScheduleWidget.TemporalExpressions;
 
 namespace ScheduleWidget.Schedule
 {
@@ -36,6 +36,8 @@ namespace ScheduleWidget.Schedule
         public ScheduleAnnual Annual { get; private set; }
 
         public TemporalExpressionUnion ExcludedDates { get; private set; }
+
+        public ScheduleDayOfMonth Monthly { get; private set; }
 
         public void SetFrequencyType(FrequencyType type)
         {
@@ -70,6 +72,11 @@ namespace ScheduleWidget.Schedule
         public void SetAnniversary(ScheduleAnnual annual)
         {
             Annual = annual;
+        }
+
+        public void SetMonthly(ScheduleDayOfMonth monthly)
+        {
+            Monthly = monthly;
         }
 
         public void SetExcludedDates(TemporalExpressionUnion union)

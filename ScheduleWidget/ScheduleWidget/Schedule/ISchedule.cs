@@ -1,8 +1,8 @@
 ﻿using ScheduleWidget.Common;
-using System;
-using System.Collections.Generic;
 using ScheduleWidget.TemporalExpressions;
 using ScheduleWidget.TemporalExpressions.Base;
+using System;
+using System.Collections.Generic;
 
 namespace ScheduleWidget.Schedule
 {
@@ -30,6 +30,8 @@ namespace ScheduleWidget.Schedule
         ScheduleRangeInYear RangeInYear { get; }
 
         ScheduleAnnual Annual { get; }
+
+        ScheduleDayOfMonth Monthly { get; }
 
         TemporalExpressionUnion ExcludedDates { get; }
 
