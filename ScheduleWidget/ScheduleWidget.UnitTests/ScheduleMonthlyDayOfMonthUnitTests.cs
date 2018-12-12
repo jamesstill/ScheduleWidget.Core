@@ -8,7 +8,7 @@ using System.Diagnostics;
 namespace ScheduleWidget.UnitTests
 {
     /// <summary>
-    /// Test concepts like "Mon, Wed, and Fri of the 1st and 3rd weeks of the month."
+    /// Test concepts like "The 2nd of each month."
     /// </summary>
     [TestClass]
     public class ScheduleMonthlyDayOfMonthUnitTests
